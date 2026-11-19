@@ -1,0 +1,96 @@
+@page "{id:int}"
+@model SinemaApp.Pages.Gosterimler.BiletModel
+@{
+    ViewData["Title"] = "Bilet Satışı";
+    var g = Model.Gosterim;
+    int kapasite = Convert.ToInt32(g["kapasite"]);
+    int siraSayisi = (kapasite + Bicim.SiraBasinaKoltuk - 1) / Bicim.SiraBasinaKoltuk;
+}
+
+<h2>Bilet Satışı</h2>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-1">@g["film_adi"]</h5>
+                <div class="text-muted small mb-3">@g["tur"] &middot; @g["sure_dk"] dk</div>
+                <table class="table table-sm small mb-0">
+                    <tr><td>Sinema</td><td>@g["sinema_adi"]</td></tr>
+                    <tr><td>Salon</td><td>@g["salon_adi"]</td></tr>
+                    <tr><td>Tarih</td><td>@Bicim.TarihGun(g["tarih"])</td></tr>
+                    <tr><td>Seans</td><td>@Bicim.Saat(g["baslangic_saati"]) - @Bicim.Saat(g["bitis_saati"])</td></tr>
+                    <tr><td>Fiyat</td><td><b>@Bicim.Para(g["bilet_fiyati"])</b></td></tr>
+                    <tr><td>Boş koltuk</td><td>@g["bos_koltuk"] / @kapasite</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 mb-4">
+        @if (Model.Gecmis)
+        {
+            <div class="alert alert-secondary">Bu gösterim başlamış veya geçmiş, bilet satışı yapılamaz.</div>
+        }
+
+        <form method="post">
+            <div class="card">
+                <div class="card-body">
+                    <div class="perde"></div>
+                    <div class="perde-yazi">PERDE</div>
+
+                    <div style="overflow-x:auto">
+                        @for (int sira = 0; sira < siraSayisi; sira++)
+                        {
+                            <div class="koltuk-sira">
+                                <span class="sira-harf">@((char)('A' + sira))</span>
+                                @for (int k = 1; k <= Bicim.SiraBasinaKoltuk; k++)
+                                {
+                                    int no = sira * Bicim.SiraBasinaKoltuk + k;
+                                    if (no > kapasite) break;
+                                    bool dolu = Model.DoluKoltuklar.Contains(no);
+                                    string sinif = (dolu ? "dolu " : "") + (k == 5 ? "koridor" : "");
+                                    <label class="koltuk @sinif mb-0" title="@Bicim.Koltuk(no)">
+                                        <input type="radio" name="KoltukNo" value="@no" disabled="@(dolu || Model.Gecmis)" />
+                                        <span>@k</span>
+                                    </label>
+                                }
+                                <span class="sira-harf text-right">@((char)('A' + sira))</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="koltuk-aciklama small text-center mt-3">
+                        <span style="background:#d4edda;border:1px solid #9fd3ad"></span>Boş
+                        <span style="background:#e2e3e5;border:1px solid #ccc"></span>Dolu
+                        <span style="background:#007bff"></span>Seçili
+                    </div>
+                </div>
+            </div>
+
+            @if (!Model.Gecmis)
+            {
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="form-row align-items-end">
+                            <div class="col-md-8 mb-2">
+                                <label class="mb-1">Müşteri</label>
+                                <select name="MusteriNo" class="form-control" required>
+                                    <option value="">-- müşteri seçiniz --</option>
+                                    @foreach (DataRow m in Model.Musteriler.Rows)
+                                    {
+                                        <option value="@m["musteri_no"]">@m["ad"] @m["soyad"] (@m["eposta"])</option>
+                                    }
+                                </select>
+                                <small><a asp-page="/Musteriler/Duzenle">Yeni müşteri kaydet</a></small>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-primary btn-block">Rezervasyon Yap</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+</div>

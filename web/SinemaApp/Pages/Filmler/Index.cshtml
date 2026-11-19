@@ -1,0 +1,60 @@
+@page
+@model SinemaApp.Pages.Filmler.IndexModel
+@{
+    ViewData["Title"] = "Filmler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Filmler</h2>
+    <a asp-page="Duzenle" class="btn btn-success">+ Yeni Film</a>
+</div>
+
+<form method="get" class="form-inline mb-3">
+    <input asp-for="Ara" class="form-control mr-2" placeholder="Film adı veya tür..." />
+    <button class="btn btn-outline-secondary">Ara</button>
+</form>
+
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>Film Adı</th>
+            <th>Tür</th>
+            <th>Süre</th>
+            <th>Vizyon Tarihi</th>
+            <th>Gösterim</th>
+            <th>Satılan</th>
+            <th>Hasılat</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DataRow f in Model.Filmler.Rows)
+        {
+            var vizyonda = (DateTime)f["vizyon_tarihi"] <= DateTime.Today;
+            <tr>
+                <td>@f["film_no"]</td>
+                <td>
+                    @f["ad"]
+                    @if (!vizyonda)
+                    {
+                        <span class="badge badge-info ml-1">Yakında</span>
+                    }
+                </td>
+                <td>@f["tur"]</td>
+                <td>@f["sure_dk"] dk</td>
+                <td>@Bicim.Tarih(f["vizyon_tarihi"])</td>
+                <td>@f["gosterim_sayisi"]</td>
+                <td>@f["odenen_bilet"]</td>
+                <td>@Bicim.Para(f["hasilat"])</td>
+                <td class="text-right text-nowrap">
+                    <a asp-page="Duzenle" asp-route-id="@f["film_no"]" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                    <form method="post" asp-page-handler="Sil" asp-route-id="@f["film_no"]" class="d-inline"
+                          onsubmit="return confirm('Film silinsin mi?');">
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

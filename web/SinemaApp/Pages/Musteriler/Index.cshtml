@@ -1,0 +1,49 @@
+@page
+@model SinemaApp.Pages.Musteriler.IndexModel
+@{
+    ViewData["Title"] = "Müşteriler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Müşteriler</h2>
+    <a asp-page="Duzenle" class="btn btn-success">+ Yeni Müşteri</a>
+</div>
+
+<form method="get" class="form-inline mb-3">
+    <input asp-for="Ara" class="form-control mr-2" placeholder="Ad, e-posta veya telefon..." style="min-width:260px" />
+    <button class="btn btn-outline-secondary">Ara</button>
+</form>
+
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>Ad Soyad</th>
+            <th>E-posta</th>
+            <th>Telefon(lar)</th>
+            <th>Bilet</th>
+            <th>Harcama</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DataRow m in Model.Musteriler.Rows)
+        {
+            <tr>
+                <td>@m["musteri_no"]</td>
+                <td>@m["ad"] @m["soyad"]</td>
+                <td>@m["eposta"]</td>
+                <td class="small">@m["telefonlar"]</td>
+                <td>@m["bilet_sayisi"]</td>
+                <td>@Bicim.Para(m["toplam_harcama"])</td>
+                <td class="text-right text-nowrap">
+                    <a asp-page="Duzenle" asp-route-id="@m["musteri_no"]" class="btn btn-sm btn-outline-primary">Detay</a>
+                    <form method="post" asp-page-handler="Sil" asp-route-id="@m["musteri_no"]" class="d-inline"
+                          onsubmit="return confirm('Müşteri silinsin mi?');">
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

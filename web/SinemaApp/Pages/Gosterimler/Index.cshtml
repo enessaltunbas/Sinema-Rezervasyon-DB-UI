@@ -1,0 +1,92 @@
+@page
+@model SinemaApp.Pages.Gosterimler.IndexModel
+@{
+    ViewData["Title"] = "Gösterimler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Gösterimler</h2>
+    <a asp-page="Duzenle" class="btn btn-success">+ Yeni Gösterim</a>
+</div>
+
+<form method="get" class="card card-body mb-3">
+    <div class="form-row align-items-end">
+        <div class="col-md-3 mb-2">
+            <label class="small mb-1">Tarih</label>
+            <input asp-for="Tarih" type="date" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-3 mb-2">
+            <label class="small mb-1">Sinema</label>
+            <select asp-for="SinemaNo" class="form-control form-control-sm">
+                <option value="">Tümü</option>
+                @foreach (DataRow s in Model.Sinemalar.Rows)
+                {
+                    <option value="@s["sinema_no"]">@s["ad"]</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 mb-2">
+            <label class="small mb-1">Film</label>
+            <select asp-for="FilmNo" class="form-control form-control-sm">
+                <option value="">Tümü</option>
+                @foreach (DataRow f in Model.Filmler.Rows)
+                {
+                    <option value="@f["film_no"]">@f["ad"]</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="form-check mb-1">
+                <input asp-for="Gecmis" class="form-check-input" />
+                <label asp-for="Gecmis" class="form-check-label small">Geçmiş gösterimler de</label>
+            </div>
+            <button class="btn btn-sm btn-primary">Filtrele</button>
+            <a asp-page="Index" class="btn btn-sm btn-link">Temizle</a>
+        </div>
+    </div>
+</form>
+
+<table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>Tarih / Saat</th>
+            <th>Film</th>
+            <th>Sinema - Salon</th>
+            <th>Fiyat</th>
+            <th>Doluluk</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Gosterimler.Rows.Count == 0)
+        {
+            <tr><td colspan="6" class="text-center text-muted">Kayıt bulunamadı.</td></tr>
+        }
+        @foreach (DataRow g in Model.Gosterimler.Rows)
+        {
+            var yuzde = Convert.ToDouble(g["doluluk_yuzde"]);
+            var renk = yuzde >= 80 ? "bg-danger" : yuzde >= 50 ? "bg-warning" : "bg-success";
+            <tr>
+                <td>
+                    @Bicim.TarihGun(g["tarih"])<br />
+                    <b>@Bicim.Saat(g["baslangic_saati"])</b> <small class="text-muted">- @Bicim.Saat(g["bitis_saati"])</small>
+                </td>
+                <td>@g["film_adi"]<br /><small class="text-muted">@g["tur"] &middot; @g["sure_dk"] dk</small></td>
+                <td>@g["sinema_adi"]<br /><small class="text-muted">@g["salon_adi"]</small></td>
+                <td>@Bicim.Para(g["bilet_fiyati"])</td>
+                <td style="width:150px">
+                    <small>@g["satilan_koltuk"] / @g["kapasite"]</small>
+                    <div class="progress doluluk"><div class="progress-bar @renk" style="width:@(yuzde.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+                </td>
+                <td class="text-right text-nowrap">
+                    <a asp-page="Bilet" asp-route-id="@g["gosterim_no"]" class="btn btn-sm btn-primary">Bilet Sat</a>
+                    <a asp-page="Duzenle" asp-route-id="@g["gosterim_no"]" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                    <form method="post" asp-page-handler="Sil" asp-route-id="@g["gosterim_no"]" class="d-inline"
+                          onsubmit="return confirm('Gösterim silinsin mi?');">
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
