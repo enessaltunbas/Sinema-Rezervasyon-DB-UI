@@ -1,0 +1,122 @@
+@page
+@model SinemaApp.Pages.Raporlar.IndexModel
+@{
+    ViewData["Title"] = "Raporlar";
+}
+
+<h2>Raporlar</h2>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="card">
+            <div class="card-header bg-white"><b>Film Bazında Hasılat</b> <small class="text-muted">(v_film_hasilat)</small></div>
+            <table class="table table-sm mb-0">
+                <thead class="thead-light">
+                    <tr><th>Film</th><th>Tür</th><th>Gösterim</th><th>Ödenen</th><th>Bekleyen</th><th class="text-right">Hasılat</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow f in Model.FilmHasilat.Rows)
+                    {
+                        <tr>
+                            <td>@f["film_adi"]</td>
+                            <td>@f["tur"]</td>
+                            <td>@f["gosterim_sayisi"]</td>
+                            <td>@f["odenen_bilet"]</td>
+                            <td>@f["bekleyen_bilet"]</td>
+                            <td class="text-right">@Bicim.Para(f["hasilat"])</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-5 mb-4">
+        <div class="card mb-4">
+            <div class="card-header bg-white"><b>Sinema Özeti</b> <small class="text-muted">(v_sinema_ozet)</small></div>
+            <table class="table table-sm mb-0">
+                <thead class="thead-light">
+                    <tr><th>Sinema</th><th>Salon</th><th>Kapasite</th><th class="text-right">Hasılat</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow s in Model.SinemaOzet.Rows)
+                    {
+                        <tr>
+                            <td>@s["sinema_adi"]</td>
+                            <td>@s["salon_sayisi"]</td>
+                            <td>@s["toplam_kapasite"]</td>
+                            <td class="text-right">@Bicim.Para(s["hasilat"])</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white"><b>En Çok Harcama Yapan Müşteriler</b></div>
+            <ol class="list-group list-group-flush">
+                @foreach (DataRow m in Model.EnIyiMusteriler.Rows)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@m["ad"] @m["soyad"] <small class="text-muted">(@m["bilet_sayisi"] bilet)</small></span>
+                        <b>@Bicim.Para(m["toplam_harcama"])</b>
+                    </li>
+                }
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <b>Günlük Satış Raporu</b> <small class="text-muted">(sp_tarih_araligi_rapor)</small>
+            </div>
+            <div class="card-body pb-0">
+                <form method="get" class="form-inline">
+                    <input asp-for="Baslangic" type="date" class="form-control form-control-sm mr-2 mb-2" />
+                    <input asp-for="Bitis" type="date" class="form-control form-control-sm mr-2 mb-2" />
+                    <button class="btn btn-sm btn-primary mb-2">Getir</button>
+                </form>
+            </div>
+            <table class="table table-sm mb-0">
+                <thead class="thead-light">
+                    <tr><th>Tarih</th><th>Gösterim</th><th>Satılan Bilet</th><th class="text-right">Hasılat</th></tr>
+                </thead>
+                <tbody>
+                    @if (Model.GunlukRapor.Rows.Count == 0)
+                    {
+                        <tr><td colspan="4" class="text-center text-muted">Bu aralıkta gösterim yok.</td></tr>
+                    }
+                    @foreach (DataRow g in Model.GunlukRapor.Rows)
+                    {
+                        <tr>
+                            <td>@Bicim.TarihGun(g["tarih"])</td>
+                            <td>@g["gosterim_sayisi"]</td>
+                            <td>@g["satilan_bilet"]</td>
+                            <td class="text-right">@Bicim.Para(g["hasilat"])</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-header bg-white"><b>Son Durum Değişiklikleri</b> <small class="text-muted">(rezervasyon_log)</small></div>
+            <ul class="list-group list-group-flush small">
+                @foreach (DataRow l in Model.SonIslemler.Rows)
+                {
+                    <li class="list-group-item">
+                        <b>#@l["rezervasyon_no"]</b> @l["musteri"]:
+                        @(l["eski_durum"] == DBNull.Value ? "Oluşturuldu" : Bicim.DurumYazi(l["eski_durum"]))
+                        &rarr; <span class="badge badge-@Bicim.DurumRenk(l["yeni_durum"])">@Bicim.DurumYazi(l["yeni_durum"])</span>
+                        <span class="text-muted float-right">@Bicim.TarihSaat(l["islem_zamani"])</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
