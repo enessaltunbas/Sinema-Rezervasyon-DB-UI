@@ -1,0 +1,1 @@
+#burada görev dağılımı yapacağız arkadaşlar <3
