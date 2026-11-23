@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-lg-7 mb-4">
         <div class="card">
-            <div class="card-header bg-white"><b>Film Bazında Hasılat</b> <small class="text-muted">(v_film_hasilat)</small></div>
+            <div class="card-header bg-white"><b>Film Bazında Hasılat</b></div>
             <table class="table table-sm mb-0">
                 <thead class="thead-light">
                     <tr><th>Film</th><th>Tür</th><th>Gösterim</th><th>Ödenen</th><th>Bekleyen</th><th class="text-right">Hasılat</th></tr>
@@ -33,7 +33,7 @@
 
     <div class="col-lg-5 mb-4">
         <div class="card mb-4">
-            <div class="card-header bg-white"><b>Sinema Özeti</b> <small class="text-muted">(v_sinema_ozet)</small></div>
+            <div class="card-header bg-white"><b>Sinema Özeti</b></div>
             <table class="table table-sm mb-0">
                 <thead class="thead-light">
                     <tr><th>Sinema</th><th>Salon</th><th>Kapasite</th><th class="text-right">Hasılat</th></tr>
@@ -70,9 +70,7 @@
 <div class="row">
     <div class="col-lg-7 mb-4">
         <div class="card">
-            <div class="card-header bg-white">
-                <b>Günlük Satış Raporu</b> <small class="text-muted">(sp_tarih_araligi_rapor)</small>
-            </div>
+            <div class="card-header bg-white"><b>Günlük Satış Raporu</b></div>
             <div class="card-body pb-0">
                 <form method="get" class="form-inline">
                     <input asp-for="Baslangic" type="date" class="form-control form-control-sm mr-2 mb-2" />
@@ -100,23 +98,6 @@
                     }
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="col-lg-5 mb-4">
-        <div class="card">
-            <div class="card-header bg-white"><b>Son Durum Değişiklikleri</b> <small class="text-muted">(rezervasyon_log)</small></div>
-            <ul class="list-group list-group-flush small">
-                @foreach (DataRow l in Model.SonIslemler.Rows)
-                {
-                    <li class="list-group-item">
-                        <b>#@l["rezervasyon_no"]</b> @l["musteri"]:
-                        @(l["eski_durum"] == DBNull.Value ? "Oluşturuldu" : Bicim.DurumYazi(l["eski_durum"]))
-                        &rarr; <span class="badge badge-@Bicim.DurumRenk(l["yeni_durum"])">@Bicim.DurumYazi(l["yeni_durum"])</span>
-                        <span class="text-muted float-right">@Bicim.TarihSaat(l["islem_zamani"])</span>
-                    </li>
-                }
-            </ul>
         </div>
     </div>
 </div>

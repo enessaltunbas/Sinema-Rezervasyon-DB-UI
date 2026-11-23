@@ -48,7 +48,7 @@
         @if (!Model.YeniKayit)
         {
             <div class="card mt-4">
-                <div class="card-header bg-white"><b>Telefonlar</b></div>
+                <div class="card-header bg-white"><b>Telefonlar</b> <small class="text-muted">(MUSTERI_TELEFON)</small></div>
                 <ul class="list-group list-group-flush">
                     @foreach (DataRow t in Model.Telefonlar.Rows)
                     {

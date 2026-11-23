@@ -36,10 +36,6 @@
             </select>
         </div>
         <div class="col-md-3 mb-2">
-            <div class="form-check mb-1">
-                <input asp-for="Gecmis" class="form-check-input" />
-                <label asp-for="Gecmis" class="form-check-label small">Geçmiş gösterimler de</label>
-            </div>
             <button class="btn btn-sm btn-primary">Filtrele</button>
             <a asp-page="Index" class="btn btn-sm btn-link">Temizle</a>
         </div>
@@ -75,7 +71,7 @@
                 <td>@g["sinema_adi"]<br /><small class="text-muted">@g["salon_adi"]</small></td>
                 <td>@Bicim.Para(g["bilet_fiyati"])</td>
                 <td style="width:150px">
-                    <small>@g["satilan_koltuk"] / @g["kapasite"]</small>
+                    <small>@g["satilan_koltuk"] / @g["kapasite"] (boş: @g["bos_koltuk"])</small>
                     <div class="progress doluluk"><div class="progress-bar @renk" style="width:@(yuzde.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
                 </td>
                 <td class="text-right text-nowrap">

@@ -1,0 +1,108 @@
+@page "{id:int?}"
+@model SinemaApp.Pages.Musteriler.DuzenleModel
+@{
+    ViewData["Title"] = Model.YeniKayit ? "Yeni Müşteri" : Model.Musteri.Ad + " " + Model.Musteri.Soyad;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-header bg-white"><b>Müşteri Bilgileri</b></div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="Kaydet">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Musteri.MusteriNo" />
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Ad</label>
+                            <input asp-for="Musteri.Ad" class="form-control" />
+                            <span asp-validation-for="Musteri.Ad" class="text-danger small"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Soyad</label>
+                            <input asp-for="Musteri.Soyad" class="form-control" />
+                            <span asp-validation-for="Musteri.Soyad" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>E-posta</label>
+                        <input asp-for="Musteri.Eposta" class="form-control" />
+                        <span asp-validation-for="Musteri.Eposta" class="text-danger small"></span>
+                    </div>
+                    @if (Model.YeniKayit)
+                    {
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input name="ilkTelefon" class="form-control" placeholder="05xx xxx xx xx" />
+                            <small class="text-muted">Diğer numaralar kayıttan sonra eklenebilir.</small>
+                        </div>
+                    }
+                    <button class="btn btn-primary">Kaydet</button>
+                    <a asp-page="Index" class="btn btn-link">Geri</a>
+                </form>
+            </div>
+        </div>
+
+        @if (!Model.YeniKayit)
+        {
+            <div class="card mt-4">
+                <div class="card-header bg-white"><b>Telefonlar</b></div>
+                <ul class="list-group list-group-flush">
+                    @foreach (DataRow t in Model.Telefonlar.Rows)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @t["telefon"]
+                            <form method="post" asp-page-handler="TelefonSil" asp-route-id="@Model.Musteri.MusteriNo">
+                                <input type="hidden" name="telefon" value="@t["telefon"]" />
+                                <button class="btn btn-sm btn-link text-danger p-0">kaldır</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="TelefonEkle" asp-route-id="@Model.Musteri.MusteriNo" class="form-inline">
+                        <input name="telefon" class="form-control form-control-sm mr-2" placeholder="05xx xxx xx xx" />
+                        <button class="btn btn-sm btn-outline-success">Ekle</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.YeniKayit)
+    {
+        <div class="col-lg-7 mb-4">
+            <div class="card">
+                <div class="card-header bg-white"><b>Rezervasyon Geçmişi</b></div>
+                <table class="table table-sm mb-0">
+                    <thead class="thead-light">
+                        <tr><th>No</th><th>Film</th><th>Seans</th><th>Koltuk</th><th>Ücret</th><th>Durum</th></tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Rezervasyonlar.Rows.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-muted text-center">Henüz rezervasyon yok.</td></tr>
+                        }
+                        @foreach (DataRow r in Model.Rezervasyonlar.Rows)
+                        {
+                            <tr>
+                                <td>@r["rezervasyon_no"]</td>
+                                <td>@r["film_adi"]<br /><small class="text-muted">@r["sinema_adi"] - @r["salon_adi"]</small></td>
+                                <td>@Bicim.Tarih(r["tarih"]) @Bicim.Saat(r["baslangic_saati"])</td>
+                                <td>@Bicim.Koltuk(r["koltuk_no"])</td>
+                                <td>@Bicim.Para(r["ucret"])</td>
+                                <td><span class="badge badge-@Bicim.DurumRenk(r["odeme_durumu"])">@Bicim.DurumYazi(r["odeme_durumu"])</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

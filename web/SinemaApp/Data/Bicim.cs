@@ -11,7 +11,7 @@ namespace SinemaApp.Data
         public static string Para(object deger)
         {
             if (deger == null || deger == DBNull.Value) return "0,00 ₺";
-            return Convert.ToDecimal(deger).ToString("N2", tr) + " ₺";
+            return Convert.ToDecimal(deger, CultureInfo.InvariantCulture).ToString("N2", tr) + " ₺";
         }
 
         public static string Tarih(object deger)
@@ -32,11 +32,22 @@ namespace SinemaApp.Data
             return Convert.ToDateTime(deger).ToString("dd.MM.yyyy HH:mm", tr);
         }
 
+        // Access DATETIME alanında saatler 1899-12-30 tarihli DateTime olarak tutulur
         public static string Saat(object deger)
         {
             if (deger == null || deger == DBNull.Value) return "";
             if (deger is TimeSpan ts) return ts.ToString(@"hh\:mm");
+            if (deger is DateTime dt) return dt.ToString("HH:mm");
+            if (DateTime.TryParse(deger.ToString(), out var d)) return d.ToString("HH:mm");
             return deger.ToString();
+        }
+
+        public static TimeSpan SaatDegeri(object deger)
+        {
+            if (deger is TimeSpan ts) return ts;
+            if (deger is DateTime dt) return dt.TimeOfDay;
+            if (DateTime.TryParse(deger?.ToString(), out var d)) return d.TimeOfDay;
+            return TimeSpan.Zero;
         }
 
         // 1 -> A1, 11 -> B1 ... (her sırada 10 koltuk)

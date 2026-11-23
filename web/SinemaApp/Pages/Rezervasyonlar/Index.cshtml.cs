@@ -1,7 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Rezervasyonlar
@@ -23,28 +24,42 @@ namespace SinemaApp.Pages.Rezervasyonlar
 
         public void OnGet()
         {
+            var kosullar = new List<string> { "1=1" };
+            var prm = new List<object>();
+
+            if (!string.IsNullOrEmpty(Durum))
+            {
+                kosullar.Add("odeme_durumu = ?");
+                prm.Add(Durum);
+            }
+            if (!string.IsNullOrWhiteSpace(Ara))
+            {
+                var a = "%" + Ara.Trim() + "%";
+                if (int.TryParse(Ara.Trim(), out int rno))
+                {
+                    kosullar.Add("(musteri LIKE ? OR film_adi LIKE ? OR rezervasyon_no = ?)");
+                    prm.Add(a); prm.Add(a); prm.Add(rno);
+                }
+                else
+                {
+                    kosullar.Add("(musteri LIKE ? OR film_adi LIKE ?)");
+                    prm.Add(a); prm.Add(a);
+                }
+            }
+
             Rezervasyonlar = db.Tablo(
-                @"SELECT * FROM v_rezervasyon_detay
-                  WHERE (@durum IS NULL OR odeme_durumu = @durum)
-                    AND (@ara IS NULL
-                         OR musteri LIKE CONCAT('%', @ara, '%')
-                         OR film_adi LIKE CONCAT('%', @ara, '%')
-                         OR rezervasyon_no = @ara)
-                  ORDER BY rezervasyon_no DESC",
-                Db.P("@durum", string.IsNullOrEmpty(Durum) ? null : Durum),
-                Db.P("@ara", string.IsNullOrWhiteSpace(Ara) ? null : Ara.Trim()));
+                $"SELECT * FROM ({Db.RezervasyonDetaySql}) AS q WHERE {string.Join(" AND ", kosullar)} ORDER BY rezervasyon_no DESC",
+                prm.ToArray());
         }
 
-        // Ödeme ve iptal işlemleri stored procedure ile yapılıyor,
-        // durum değişikliği trigger ile rezervasyon_log tablosuna yazılıyor.
         public IActionResult OnPostOdeme(int id)
         {
             try
             {
-                db.Calistir("CALL sp_odeme_al(@id)", Db.P("@id", id));
+                db.Calistir("UPDATE REZERVASYON SET odeme_durumu = 'Odendi' WHERE rezervasyon_no = ? AND odeme_durumu = 'Beklemede'", id);
                 TempData["Mesaj"] = $"{id} numaralı rezervasyonun ödemesi alındı.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
@@ -55,10 +70,10 @@ namespace SinemaApp.Pages.Rezervasyonlar
         {
             try
             {
-                db.Calistir("CALL sp_rezervasyon_iptal(@id)", Db.P("@id", id));
+                db.Calistir("UPDATE REZERVASYON SET odeme_durumu = 'Iptal' WHERE rezervasyon_no = ?", id);
                 TempData["Mesaj"] = $"{id} numaralı rezervasyon iptal edildi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }

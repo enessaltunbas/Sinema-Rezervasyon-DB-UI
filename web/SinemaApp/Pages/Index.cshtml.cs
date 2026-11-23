@@ -15,7 +15,7 @@ namespace SinemaApp.Pages
         }
 
         public long FilmSayisi { get; set; }
-        public long BugunkuGosterim { get; set; }
+        public long GosterimSayisi { get; set; }
         public long AktifRezervasyon { get; set; }
         public decimal ToplamHasilat { get; set; }
         public DataTable YaklasanGosterimler { get; set; }
@@ -23,30 +23,23 @@ namespace SinemaApp.Pages
 
         public void OnGet()
         {
-            FilmSayisi = Convert.ToInt64(db.Deger(
-                "SELECT COUNT(*) FROM film WHERE vizyon_tarihi <= CURDATE()"));
-
-            BugunkuGosterim = Convert.ToInt64(db.Deger(
-                "SELECT COUNT(*) FROM gosterim WHERE tarih BETWEEN CURDATE() AND CURDATE() + INTERVAL 7 DAY"));
+            FilmSayisi = Convert.ToInt64(db.Deger("SELECT COUNT(*) FROM FILM") ?? 0);
+            GosterimSayisi = Convert.ToInt64(db.Deger("SELECT COUNT(*) FROM GOSTERIM") ?? 0);
 
             AktifRezervasyon = Convert.ToInt64(db.Deger(
-                @"SELECT COUNT(*) FROM rezervasyon r
-                  JOIN gosterim g ON g.gosterim_no = r.gosterim_no
-                  WHERE r.odeme_durumu <> 'Iptal' AND g.tarih >= CURDATE()"));
+                "SELECT COUNT(*) FROM REZERVASYON WHERE odeme_durumu <> 'Iptal'") ?? 0);
 
-            ToplamHasilat = Convert.ToDecimal(db.Deger(
-                "SELECT IFNULL(SUM(hasilat), 0) FROM v_film_hasilat"));
+            var hasilat = db.Deger(@"
+                SELECT SUM(g.bilet_fiyati)
+                FROM GOSTERIM AS g INNER JOIN REZERVASYON AS r ON g.gosterim_no = r.gosterim_no
+                WHERE r.odeme_durumu = 'Odendi'");
+            ToplamHasilat = hasilat == null ? 0 : Convert.ToDecimal(hasilat, System.Globalization.CultureInfo.InvariantCulture);
 
             YaklasanGosterimler = db.Tablo(
-                @"SELECT * FROM v_gosterim_detay
-                  WHERE TIMESTAMP(tarih, baslangic_saati) >= NOW()
-                  ORDER BY tarih, baslangic_saati
-                  LIMIT 8");
+                $"SELECT TOP 8 * FROM ({Db.GosterimDetaySql}) AS q ORDER BY tarih, baslangic_saati");
 
             SonRezervasyonlar = db.Tablo(
-                @"SELECT * FROM v_rezervasyon_detay
-                  ORDER BY rezervasyon_tarihi DESC
-                  LIMIT 6");
+                $"SELECT TOP 6 * FROM ({Db.RezervasyonDetaySql}) AS q ORDER BY rezervasyon_tarihi DESC");
         }
     }
 }

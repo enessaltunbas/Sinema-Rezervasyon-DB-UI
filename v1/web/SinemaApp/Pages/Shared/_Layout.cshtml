@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sinema Rezervasyon</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var aktif = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+        string Aktif(string klasor) => aktif.StartsWith(klasor) ? "active" : "";
+    }
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" asp-page="/Index">Sinema Rezervasyon</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="menu">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item @Aktif("/Gosterimler")"><a class="nav-link" asp-page="/Gosterimler/Index">Gösterimler</a></li>
+                        <li class="nav-item @Aktif("/Rezervasyonlar")"><a class="nav-link" asp-page="/Rezervasyonlar/Index">Rezervasyonlar</a></li>
+                        <li class="nav-item @Aktif("/Filmler")"><a class="nav-link" asp-page="/Filmler/Index">Filmler</a></li>
+                        <li class="nav-item @Aktif("/Sinemalar")"><a class="nav-link" asp-page="/Sinemalar/Index">Sinemalar</a></li>
+                        <li class="nav-item @Aktif("/Musteriler")"><a class="nav-link" asp-page="/Musteriler/Index">Müşteriler</a></li>
+                        <li class="nav-item @Aktif("/Raporlar")"><a class="nav-link" asp-page="/Raporlar/Index">Raporlar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        @if (TempData["Mesaj"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["Mesaj"]
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        }
+        @if (TempData["Hata"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Hata:</strong> @TempData["Hata"]
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        }
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            Veri Tabanı Yönetim Sistemleri Dersi - Sinema Rezervasyon Sistemi &middot; 2026
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

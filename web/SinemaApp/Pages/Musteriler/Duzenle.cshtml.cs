@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Musteriler
@@ -29,7 +28,7 @@ namespace SinemaApp.Pages.Musteriler
         {
             if (id == null) return Page();
 
-            var satir = db.Satir("SELECT * FROM musteri WHERE musteri_no = @id", Db.P("@id", id));
+            var satir = db.Satir("SELECT * FROM MUSTERI WHERE musteri_no = ?", id.Value);
             if (satir == null) return NotFound();
 
             Musteri.MusteriNo = Convert.ToInt32(satir["musteri_no"]);
@@ -42,12 +41,11 @@ namespace SinemaApp.Pages.Musteriler
 
         private void AltTablolariYukle()
         {
-            Telefonlar = db.Tablo("SELECT * FROM musteri_telefon WHERE musteri_no = @id",
-                Db.P("@id", Musteri.MusteriNo));
+            Telefonlar = db.Tablo("SELECT * FROM MUSTERI_TELEFON WHERE musteri_no = ? ORDER BY telefon", Musteri.MusteriNo);
 
             Rezervasyonlar = db.Tablo(
-                "SELECT * FROM v_rezervasyon_detay WHERE musteri_no = @id ORDER BY tarih DESC, baslangic_saati DESC",
-                Db.P("@id", Musteri.MusteriNo));
+                $"SELECT * FROM ({Db.RezervasyonDetaySql}) AS q WHERE musteri_no = ? ORDER BY tarih DESC, baslangic_saati DESC",
+                Musteri.MusteriNo);
         }
 
         public IActionResult OnPostKaydet(string ilkTelefon)
@@ -62,42 +60,27 @@ namespace SinemaApp.Pages.Musteriler
             {
                 if (YeniKayit)
                 {
-                    // müşteri ve ilk telefonu aynı transaction içinde eklensin
-                    using var con = db.BaglantiAc();
-                    using var tr = con.BeginTransaction();
-
-                    var cmd = new MySqlCommand(
-                        "INSERT INTO musteri (ad, soyad, eposta) VALUES (@ad, @soyad, @eposta)", con, tr);
-                    cmd.Parameters.AddWithValue("@ad", Musteri.Ad.Trim());
-                    cmd.Parameters.AddWithValue("@soyad", Musteri.Soyad.Trim());
-                    cmd.Parameters.AddWithValue("@eposta", Musteri.Eposta.Trim().ToLower());
-                    cmd.ExecuteNonQuery();
-                    long yeniNo = cmd.LastInsertedId;
+                    long yeniNo = db.Ekle(
+                        "INSERT INTO MUSTERI (ad, soyad, eposta) VALUES (?, ?, ?)",
+                        Musteri.Ad.Trim(), Musteri.Soyad.Trim(), Musteri.Eposta.Trim().ToLower());
 
                     if (!string.IsNullOrWhiteSpace(ilkTelefon))
                     {
-                        var cmdTel = new MySqlCommand(
-                            "INSERT INTO musteri_telefon (musteri_no, telefon) VALUES (@no, @tel)", con, tr);
-                        cmdTel.Parameters.AddWithValue("@no", yeniNo);
-                        cmdTel.Parameters.AddWithValue("@tel", ilkTelefon.Trim());
-                        cmdTel.ExecuteNonQuery();
+                        db.Calistir("INSERT INTO MUSTERI_TELEFON (musteri_no, telefon) VALUES (?, ?)",
+                            (int)yeniNo, ilkTelefon.Trim());
                     }
 
-                    tr.Commit();
                     TempData["Mesaj"] = "Müşteri kaydedildi.";
                     return RedirectToPage(new { id = yeniNo });
                 }
 
                 db.Calistir(
-                    "UPDATE musteri SET ad = @ad, soyad = @soyad, eposta = @eposta WHERE musteri_no = @id",
-                    Db.P("@ad", Musteri.Ad.Trim()),
-                    Db.P("@soyad", Musteri.Soyad.Trim()),
-                    Db.P("@eposta", Musteri.Eposta.Trim().ToLower()),
-                    Db.P("@id", Musteri.MusteriNo));
+                    "UPDATE MUSTERI SET ad = ?, soyad = ?, eposta = ? WHERE musteri_no = ?",
+                    Musteri.Ad.Trim(), Musteri.Soyad.Trim(), Musteri.Eposta.Trim().ToLower(), Musteri.MusteriNo);
                 TempData["Mesaj"] = "Müşteri güncellendi.";
                 return RedirectToPage(new { id = Musteri.MusteriNo });
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", Db.HataMesaji(ex));
                 if (!YeniKayit) AltTablolariYukle();
@@ -115,10 +98,9 @@ namespace SinemaApp.Pages.Musteriler
 
             try
             {
-                db.Calistir("INSERT INTO musteri_telefon (musteri_no, telefon) VALUES (@id, @tel)",
-                    Db.P("@id", id), Db.P("@tel", telefon.Trim()));
+                db.Calistir("INSERT INTO MUSTERI_TELEFON (musteri_no, telefon) VALUES (?, ?)", id, telefon.Trim());
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
@@ -127,8 +109,7 @@ namespace SinemaApp.Pages.Musteriler
 
         public IActionResult OnPostTelefonSil(int id, string telefon)
         {
-            db.Calistir("DELETE FROM musteri_telefon WHERE musteri_no = @id AND telefon = @tel",
-                Db.P("@id", id), Db.P("@tel", telefon));
+            db.Calistir("DELETE FROM MUSTERI_TELEFON WHERE musteri_no = ? AND telefon = ?", id, telefon);
             return RedirectToPage(new { id });
         }
 

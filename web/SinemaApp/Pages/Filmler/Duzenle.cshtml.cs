@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Filmler
@@ -21,7 +20,6 @@ namespace SinemaApp.Pages.Filmler
 
         public bool YeniKayit => Film.FilmNo == 0;
 
-        // id yoksa yeni kayıt, varsa düzenleme
         public IActionResult OnGet(int? id)
         {
             if (id == null)
@@ -30,7 +28,7 @@ namespace SinemaApp.Pages.Filmler
                 return Page();
             }
 
-            var satir = db.Satir("SELECT * FROM film WHERE film_no = @id", Db.P("@id", id));
+            var satir = db.Satir("SELECT * FROM FILM WHERE film_no = ?", id.Value);
             if (satir == null) return NotFound();
 
             Film.FilmNo = Convert.ToInt32(satir["film_no"]);
@@ -50,29 +48,20 @@ namespace SinemaApp.Pages.Filmler
                 if (YeniKayit)
                 {
                     db.Calistir(
-                        @"INSERT INTO film (ad, tur, sure_dk, vizyon_tarihi)
-                          VALUES (@ad, @tur, @sure, @vizyon)",
-                        Db.P("@ad", Film.Ad.Trim()),
-                        Db.P("@tur", Film.Tur.Trim()),
-                        Db.P("@sure", Film.SureDk),
-                        Db.P("@vizyon", Film.VizyonTarihi));
+                        "INSERT INTO FILM (ad, tur, sure_dk, vizyon_tarihi) VALUES (?, ?, ?, ?)",
+                        Film.Ad.Trim(), Film.Tur.Trim(), Film.SureDk, Film.VizyonTarihi.Date);
                     TempData["Mesaj"] = "Film eklendi.";
                 }
                 else
                 {
                     db.Calistir(
-                        @"UPDATE film SET ad = @ad, tur = @tur, sure_dk = @sure, vizyon_tarihi = @vizyon
-                          WHERE film_no = @id",
-                        Db.P("@ad", Film.Ad.Trim()),
-                        Db.P("@tur", Film.Tur.Trim()),
-                        Db.P("@sure", Film.SureDk),
-                        Db.P("@vizyon", Film.VizyonTarihi),
-                        Db.P("@id", Film.FilmNo));
+                        "UPDATE FILM SET ad = ?, tur = ?, sure_dk = ?, vizyon_tarihi = ? WHERE film_no = ?",
+                        Film.Ad.Trim(), Film.Tur.Trim(), Film.SureDk, Film.VizyonTarihi.Date, Film.FilmNo);
                     TempData["Mesaj"] = "Film güncellendi.";
                 }
                 return RedirectToPage("Index");
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", Db.HataMesaji(ex));
                 return Page();

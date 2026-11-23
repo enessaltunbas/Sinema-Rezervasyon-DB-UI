@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Gosterimler
@@ -23,34 +23,39 @@ namespace SinemaApp.Pages.Gosterimler
         [BindProperty(SupportsGet = true)] public DateTime? Tarih { get; set; }
         [BindProperty(SupportsGet = true)] public int? SinemaNo { get; set; }
         [BindProperty(SupportsGet = true)] public int? FilmNo { get; set; }
-        [BindProperty(SupportsGet = true)] public bool Gecmis { get; set; }
 
         public void OnGet()
         {
-            Sinemalar = db.Tablo("SELECT sinema_no, ad FROM sinema ORDER BY ad");
-            Filmler = db.Tablo("SELECT film_no, ad FROM film ORDER BY ad");
+            Sinemalar = db.Tablo("SELECT sinema_no, ad FROM SINEMA ORDER BY ad");
+            Filmler = db.Tablo("SELECT film_no, ad FROM FILM ORDER BY ad");
+
+            var kosullar = new List<string> { "1=1" };
+            var prm = new List<object>();
+            if (Tarih != null) { kosullar.Add("tarih = ?"); prm.Add(Tarih.Value.Date); }
+            if (SinemaNo != null) { kosullar.Add("sinema_no = ?"); prm.Add(SinemaNo.Value); }
+            if (FilmNo != null) { kosullar.Add("film_no = ?"); prm.Add(FilmNo.Value); }
 
             Gosterimler = db.Tablo(
-                @"SELECT * FROM v_gosterim_detay
-                  WHERE (@tarih IS NULL OR tarih = @tarih)
-                    AND (@sinema IS NULL OR sinema_no = @sinema)
-                    AND (@film IS NULL OR film_no = @film)
-                    AND (@gecmis = 1 OR TIMESTAMP(tarih, baslangic_saati) >= NOW())
-                  ORDER BY tarih, baslangic_saati, sinema_adi",
-                Db.P("@tarih", Tarih?.Date),
-                Db.P("@sinema", SinemaNo),
-                Db.P("@film", FilmNo),
-                Db.P("@gecmis", Gecmis ? 1 : 0));
+                $"SELECT * FROM ({Db.GosterimDetaySql}) AS q WHERE {string.Join(" AND ", kosullar)} ORDER BY tarih, baslangic_saati, sinema_adi",
+                prm.ToArray());
+
+            Gosterimler.Columns.Add("doluluk_yuzde", typeof(double));
+            foreach (DataRow r in Gosterimler.Rows)
+            {
+                int kap = Convert.ToInt32(r["kapasite"]);
+                int sat = Convert.ToInt32(r["satilan_koltuk"]);
+                r["doluluk_yuzde"] = kap > 0 ? Math.Round(sat * 100.0 / kap, 1) : 0.0;
+            }
         }
 
         public IActionResult OnPostSil(int id)
         {
             try
             {
-                db.Calistir("DELETE FROM gosterim WHERE gosterim_no = @id", Db.P("@id", id));
+                db.Calistir("DELETE FROM GOSTERIM WHERE gosterim_no = ?", id);
                 TempData["Mesaj"] = "Gösterim silindi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }

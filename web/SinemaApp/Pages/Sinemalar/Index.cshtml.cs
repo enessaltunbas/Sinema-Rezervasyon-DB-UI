@@ -1,7 +1,7 @@
+using System;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Sinemalar
@@ -19,25 +19,36 @@ namespace SinemaApp.Pages.Sinemalar
 
         public void OnGet()
         {
-            Sinemalar = db.Tablo(
-                @"SELECT o.*, s.adres,
-                         (SELECT GROUP_CONCAT(telefon SEPARATOR ', ')
-                            FROM sinema_telefon t WHERE t.sinema_no = s.sinema_no) AS telefonlar
-                  FROM v_sinema_ozet o
-                  JOIN sinema s ON s.sinema_no = o.sinema_no
-                  ORDER BY o.sehir, o.sinema_adi");
+            Sinemalar = db.Tablo(@"
+                SELECT si.sinema_no, si.ad AS sinema_adi, si.adres,
+                       (SELECT COUNT(*) FROM SALON s WHERE s.sinema_no = si.sinema_no) AS salon_sayisi,
+                       (SELECT IIf(IsNull(SUM(s.kapasite)), 0, SUM(s.kapasite)) FROM SALON s WHERE s.sinema_no = si.sinema_no) AS toplam_kapasite,
+                       (SELECT COUNT(*) FROM GOSTERIM g WHERE g.sinema_no = si.sinema_no) AS gosterim_sayisi,
+                       (SELECT IIf(IsNull(SUM(g.bilet_fiyati)), 0, SUM(g.bilet_fiyati))
+                        FROM GOSTERIM g INNER JOIN REZERVASYON r ON g.gosterim_no = r.gosterim_no
+                        WHERE g.sinema_no = si.sinema_no AND r.odeme_durumu = 'Odendi') AS hasilat
+                FROM SINEMA AS si
+                ORDER BY si.ad");
+
+            var teller = db.CokDegerliHarita("SINEMA_TELEFON", "sinema_no", "telefon");
+            Sinemalar.Columns.Add("telefonlar", typeof(string));
+            foreach (DataRow r in Sinemalar.Rows)
+            {
+                int sno = Convert.ToInt32(r["sinema_no"]);
+                r["telefonlar"] = teller.TryGetValue(sno, out var t) ? t : "-";
+            }
         }
 
         public IActionResult OnPostSil(int id)
         {
             try
             {
-                // salonlar ve telefonlar CASCADE ile silinir,
-                // gösterimi olan salon varsa FK (RESTRICT) izin vermez
-                db.Calistir("DELETE FROM sinema WHERE sinema_no = @id", Db.P("@id", id));
+                db.Calistir("DELETE FROM SINEMA_TELEFON WHERE sinema_no = ?", id);
+                db.Calistir("DELETE FROM SALON WHERE sinema_no = ?", id);
+                db.Calistir("DELETE FROM SINEMA WHERE sinema_no = ?", id);
                 TempData["Mesaj"] = "Sinema silindi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }

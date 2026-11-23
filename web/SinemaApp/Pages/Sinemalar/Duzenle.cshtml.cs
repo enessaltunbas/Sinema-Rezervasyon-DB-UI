@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MySqlConnector;
 using SinemaApp.Data;
 
 namespace SinemaApp.Pages.Sinemalar
@@ -29,30 +28,26 @@ namespace SinemaApp.Pages.Sinemalar
         {
             if (id == null) return Page();
 
-            var satir = db.Satir("SELECT * FROM sinema WHERE sinema_no = @id", Db.P("@id", id));
+            var satir = db.Satir("SELECT * FROM SINEMA WHERE sinema_no = ?", id.Value);
             if (satir == null) return NotFound();
 
             Sinema.SinemaNo = Convert.ToInt32(satir["sinema_no"]);
             Sinema.Ad = satir["ad"].ToString();
             Sinema.Adres = satir["adres"].ToString();
-            Sinema.Sehir = satir["sehir"].ToString();
             AltTablolariYukle();
             return Page();
         }
 
         private void AltTablolariYukle()
         {
-            Telefonlar = db.Tablo("SELECT * FROM sinema_telefon WHERE sinema_no = @id ORDER BY telefon",
-                Db.P("@id", Sinema.SinemaNo));
+            Telefonlar = db.Tablo("SELECT * FROM SINEMA_TELEFON WHERE sinema_no = ? ORDER BY telefon", Sinema.SinemaNo);
 
-            Salonlar = db.Tablo(
-                @"SELECT s.*, (SELECT COUNT(*) FROM gosterim g
-                               WHERE g.sinema_no = s.sinema_no AND g.salon_no = s.salon_no) AS gosterim_sayisi
-                  FROM salon s WHERE s.sinema_no = @id ORDER BY s.salon_no",
-                Db.P("@id", Sinema.SinemaNo));
+            Salonlar = db.Tablo(@"
+                SELECT s.sinema_no, s.salon_no, s.ad, s.kapasite,
+                       (SELECT COUNT(*) FROM GOSTERIM g WHERE g.sinema_no = s.sinema_no AND g.salon_no = s.salon_no) AS gosterim_sayisi
+                FROM SALON AS s WHERE s.sinema_no = ? ORDER BY s.salon_no", Sinema.SinemaNo);
         }
 
-        // ---------- sinema bilgileri ----------
         public IActionResult OnPostKaydet()
         {
             if (!ModelState.IsValid)
@@ -66,30 +61,24 @@ namespace SinemaApp.Pages.Sinemalar
                 if (YeniKayit)
                 {
                     long yeniNo = db.Ekle(
-                        "INSERT INTO sinema (ad, adres, sehir) VALUES (@ad, @adres, @sehir)",
-                        Db.P("@ad", Sinema.Ad.Trim()),
-                        Db.P("@adres", Sinema.Adres.Trim()),
-                        Db.P("@sehir", Sinema.Sehir.Trim()));
+                        "INSERT INTO SINEMA (ad, adres) VALUES (?, ?)",
+                        Sinema.Ad.Trim(), Sinema.Adres.Trim());
                     TempData["Mesaj"] = "Sinema eklendi. Şimdi telefon ve salon ekleyebilirsiniz.";
                     return RedirectToPage(new { id = yeniNo });
                 }
 
                 db.Calistir(
-                    "UPDATE sinema SET ad = @ad, adres = @adres, sehir = @sehir WHERE sinema_no = @id",
-                    Db.P("@ad", Sinema.Ad.Trim()),
-                    Db.P("@adres", Sinema.Adres.Trim()),
-                    Db.P("@sehir", Sinema.Sehir.Trim()),
-                    Db.P("@id", Sinema.SinemaNo));
+                    "UPDATE SINEMA SET ad = ?, adres = ? WHERE sinema_no = ?",
+                    Sinema.Ad.Trim(), Sinema.Adres.Trim(), Sinema.SinemaNo);
                 TempData["Mesaj"] = "Sinema bilgileri güncellendi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
             return RedirectToPage(new { id = Sinema.SinemaNo == 0 ? (int?)null : Sinema.SinemaNo });
         }
 
-        // ---------- telefonlar ----------
         public IActionResult OnPostTelefonEkle(int id, string telefon)
         {
             if (string.IsNullOrWhiteSpace(telefon))
@@ -100,10 +89,9 @@ namespace SinemaApp.Pages.Sinemalar
 
             try
             {
-                db.Calistir("INSERT INTO sinema_telefon (sinema_no, telefon) VALUES (@id, @tel)",
-                    Db.P("@id", id), Db.P("@tel", telefon.Trim()));
+                db.Calistir("INSERT INTO SINEMA_TELEFON (sinema_no, telefon) VALUES (?, ?)", id, telefon.Trim());
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
@@ -112,27 +100,22 @@ namespace SinemaApp.Pages.Sinemalar
 
         public IActionResult OnPostTelefonSil(int id, string telefon)
         {
-            db.Calistir("DELETE FROM sinema_telefon WHERE sinema_no = @id AND telefon = @tel",
-                Db.P("@id", id), Db.P("@tel", telefon));
+            db.Calistir("DELETE FROM SINEMA_TELEFON WHERE sinema_no = ? AND telefon = ?", id, telefon);
             return RedirectToPage(new { id });
         }
 
-        // ---------- salonlar ----------
         public IActionResult OnPostSalonEkle(int id, string salonAd, int kapasite)
         {
             try
             {
-                // salon_no her sinemada 1'den başlayarak artıyor
+                var max = db.Deger("SELECT MAX(salon_no) FROM SALON WHERE sinema_no = ?", id);
+                int yeniSalonNo = (max == null ? 0 : Convert.ToInt32(max)) + 1;
                 db.Calistir(
-                    @"INSERT INTO salon (sinema_no, salon_no, ad, kapasite)
-                      SELECT @id, IFNULL(MAX(salon_no), 0) + 1, @ad, @kap
-                      FROM salon WHERE sinema_no = @id",
-                    Db.P("@id", id),
-                    Db.P("@ad", string.IsNullOrWhiteSpace(salonAd) ? "Salon" : salonAd.Trim()),
-                    Db.P("@kap", kapasite));
+                    "INSERT INTO SALON (sinema_no, salon_no, ad, kapasite) VALUES (?, ?, ?, ?)",
+                    id, yeniSalonNo, string.IsNullOrWhiteSpace(salonAd) ? $"Salon {yeniSalonNo}" : salonAd.Trim(), kapasite);
                 TempData["Mesaj"] = "Salon eklendi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
@@ -144,16 +127,12 @@ namespace SinemaApp.Pages.Sinemalar
             try
             {
                 db.Calistir(
-                    "UPDATE salon SET ad = @ad, kapasite = @kap WHERE sinema_no = @id AND salon_no = @no",
-                    Db.P("@ad", salonAd?.Trim()),
-                    Db.P("@kap", kapasite),
-                    Db.P("@id", id),
-                    Db.P("@no", salonNo));
+                    "UPDATE SALON SET ad = ?, kapasite = ? WHERE sinema_no = ? AND salon_no = ?",
+                    salonAd?.Trim(), kapasite, id, salonNo);
                 TempData["Mesaj"] = "Salon güncellendi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                // kapasite düşürülürken trg_salon_kapasite hata verebilir
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
             return RedirectToPage(new { id });
@@ -163,11 +142,10 @@ namespace SinemaApp.Pages.Sinemalar
         {
             try
             {
-                db.Calistir("DELETE FROM salon WHERE sinema_no = @id AND salon_no = @no",
-                    Db.P("@id", id), Db.P("@no", salonNo));
+                db.Calistir("DELETE FROM SALON WHERE sinema_no = ? AND salon_no = ?", id, salonNo);
                 TempData["Mesaj"] = "Salon silindi.";
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
                 TempData["Hata"] = Db.HataMesaji(ex);
             }
@@ -185,10 +163,6 @@ namespace SinemaApp.Pages.Sinemalar
             [Required(ErrorMessage = "Adres boş olamaz")]
             [StringLength(255)]
             public string Adres { get; set; }
-
-            [Required(ErrorMessage = "Şehir boş olamaz")]
-            [StringLength(50)]
-            public string Sehir { get; set; }
         }
     }
 }

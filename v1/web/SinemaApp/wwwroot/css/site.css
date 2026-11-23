@@ -1,0 +1,140 @@
+html {
+    font-size: 15px;
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: #f4f5f7;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    line-height: 50px;
+    white-space: nowrap;
+    font-size: 13px;
+    background: #fff;
+}
+
+.navbar-dark .nav-item.active .nav-link {
+    color: #ffc107;
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}
+
+.table {
+    background: #fff;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.ozet-kart .sayi {
+    font-size: 1.9rem;
+    font-weight: 600;
+}
+
+.ozet-kart .baslik {
+    color: #6c757d;
+    font-size: .85rem;
+    text-transform: uppercase;
+}
+
+/* doluluk çubuğu */
+.doluluk {
+    height: 6px;
+    min-width: 80px;
+}
+
+/* ---------- koltuk haritası ---------- */
+.perde {
+    background: linear-gradient(#bbb, #eee);
+    height: 8px;
+    border-radius: 0 0 50% 50%;
+    margin: 0 auto 6px;
+    width: 80%;
+}
+
+.perde-yazi {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 18px;
+    letter-spacing: 4px;
+}
+
+.koltuk-sira {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.sira-harf {
+    width: 22px;
+    font-weight: 600;
+    color: #888;
+    font-size: 13px;
+}
+
+.koltuk input {
+    display: none;
+}
+
+.koltuk span {
+    display: inline-block;
+    width: 34px;
+    height: 30px;
+    margin: 0 3px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 11px;
+    border-radius: 6px 6px 3px 3px;
+    background: #d4edda;
+    border: 1px solid #9fd3ad;
+    cursor: pointer;
+    user-select: none;
+}
+
+.koltuk span:hover {
+    background: #a8dbb5;
+}
+
+.koltuk input:checked + span {
+    background: #007bff;
+    border-color: #0062cc;
+    color: #fff;
+}
+
+.koltuk.dolu span {
+    background: #e2e3e5;
+    border-color: #ccc;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* 5. koltuktan sonra koridor */
+.koltuk.koridor {
+    margin-right: 18px;
+}
+
+.koltuk-aciklama span {
+    display: inline-block;
+    width: 16px;
+    height: 14px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin: 0 4px 0 12px;
+}

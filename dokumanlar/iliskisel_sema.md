@@ -1,104 +1,27 @@
-# Sinema Rezervasyon Sistemi - İlişkisel Şema ve Açıklamalar
+# Sinema Rezervasyon Sistemi — 7 Adımlı Dönüşüm ve 3NF Normalizasyon Özeti
 
-## 1. ER Diyagramından Tablolara Dönüşüm
+## 1. 7 Adımlı ER'den İlişkisel Modele Dönüşüm Algoritması (8 Tablo)
 
-ER diyagramı: `er_diyagrami.drawio` (draw.io / diagrams.net ile açılır), resmi: `er_diyagrami.svg`
+- **Adım 1 (Güçlü Varlıklar):**
+  - **SINEMA**(**<u>sinema_no</u>**, ad, adres)
+  - **FILM**(**<u>film_no</u>**, ad, tur, sure_dk, vizyon_tarihi)
+  - **GOSTERIM**(**<u>gosterim_no</u>**, tarih, baslangic_saati, bilet_fiyati) — *türetilmiş `bitis_saati` ve `bos_koltuk` saklanmaz.*
+  - **MUSTERI**(**<u>musteri_no</u>**, ad, soyad, eposta)
+  - **REZERVASYON**(**<u>rezervasyon_no</u>**, rezervasyon_tarihi, koltuk_no, odeme_durumu)
+- **Adım 2 (Zayıf Varlık):**
+  - **SALON**(**<u>*sinema_no*</u>**, **<u>salon_no</u>**, ad, kapasite) — *sahibi `SINEMA`'nın PK'sı + kısmi anahtar `salon_no`.*
+- **Adım 3 (1:1 İlişkiler):** Diyagramda 1:1 ilişki yoktur.
+- **Adım 4 (1:N İlişkiler):**
+  - `GOSTERIM` tablosuna `*film_no* → FILM(film_no)` ve `(*sinema_no*, *salon_no*) → SALON(sinema_no, salon_no)` yabancı anahtarları eklendi.
+  - `REZERVASYON` tablosuna `*musteri_no* → MUSTERI(musteri_no)` ve `*gosterim_no* → GOSTERIM(gosterim_no)` yabancı anahtarları eklendi.
+- **Adım 5 (M:N İlişkiler):** Film ile salon arasındaki gösterim ilişkisi, kendisine rezervasyon bağlandığı için `GOSTERIM` varlığı olarak modellenmiştir.
+- **Adım 6 (Çok Değerli Nitelikler):**
+  - **SINEMA_TELEFON**(**<u>*sinema_no*</u>**, **<u>telefon</u>**)
+  - **MUSTERI_TELEFON**(**<u>*musteri_no*</u>**, **<u>telefon</u>**)
+- **Adım 7 (n-li İlişkiler):** Derecesi > 2 olan ilişki yoktur.
 
-Gösterim (Chen):
-- Dikdörtgen: varlık, çift dikdörtgen: zayıf varlık (SALON)
-- Elips: nitelik, altı çizili: anahtar, kesikli altı çizili: kısmi anahtar
-- Çift elips: çok değerli nitelik (telefon)
-- Eşkenar dörtgen: ilişki, çift eşkenar dörtgen: tanımlayıcı ilişki (SAHİPTİR)
-- Çift çizgi: tam katılım (ör. her salon bir sinemaya ait olmak zorunda)
+## 2. 1NF → 2NF → 3NF Normalleştirme Özeti
 
-| Varlık / İlişki | Tablo | Açıklama |
-|---|---|---|
-| SİNEMA | `sinema` | |
-| SİNEMA.telefon (çok değerli) | `sinema_telefon` | 1NF gereği ayrı tablo, PK (sinema_no, telefon) |
-| SALON (zayıf) | `salon` | PK (sinema_no, salon_no). Salon numarası sadece kendi sinemasında benzersiz, bu yüzden sahibinin anahtarıyla birlikte tanımlanır |
-| FİLM | `film` | |
-| GÖSTERİM | `gosterim` | Film ile salon arasında bir ilişki ama kendi nitelikleri (tarih, saat, fiyat) var ve rezervasyonlar ona bağlanıyor, bu yüzden varlık olarak modellendi |
-| MÜŞTERİ | `musteri` | |
-| MÜŞTERİ.telefon (çok değerli) | `musteri_telefon` | PK (musteri_no, telefon) |
-| REZERVASYON | `rezervasyon` | YAPAR ve AİTTİR ilişkileri 1-N olduğu için FK olarak N tarafına (rezervasyon) eklendi |
-| - | `rezervasyon_log` | Ödeme durumu geçmişi, trigger ile doluyor (ek) |
-
-## 2. İlişkisel Şema
-
-(PK **kalın**, FK *italik*)
-
-- **sinema**(**sinema_no**, ad, adres, sehir)
-- **sinema_telefon**(***sinema_no***, **telefon**)
-- **salon**(***sinema_no***, **salon_no**, ad, kapasite)
-- **film**(**film_no**, ad, tur, sure_dk, vizyon_tarihi)
-- **gosterim**(**gosterim_no**, *film_no*, *sinema_no*, *salon_no*, tarih, baslangic_saati, bilet_fiyati)
-  - (sinema_no, salon_no) → salon
-- **musteri**(**musteri_no**, ad, soyad, eposta, kayit_tarihi)
-- **musteri_telefon**(***musteri_no***, **telefon**)
-- **rezervasyon**(**rezervasyon_no**, *musteri_no*, *gosterim_no*, rezervasyon_tarihi, koltuk_no, odeme_durumu, ucret)
-- **rezervasyon_log**(**log_no**, *rezervasyon_no*, eski_durum, yeni_durum, islem_zamani)
-
-Metinde olmayıp eklenenler: `sinema.sehir`, `musteri.kayit_tarihi`, `rezervasyon.ucret`, `rezervasyon_log` tablosu.
-
-## 3. Kısıtlar
-
-| Kısıt | Nerede | Amaç |
-|---|---|---|
-| UNIQUE | `sinema.ad` | Aynı isimde iki sinema olmasın |
-| UNIQUE | `musteri.eposta` | Bir e-posta ile tek müşteri |
-| UNIQUE | `gosterim(sinema_no, salon_no, tarih, baslangic_saati)` | Aynı salonda aynı anda başlayan iki gösterim olmasın |
-| CHECK | `salon.kapasite BETWEEN 1 AND 500` | |
-| CHECK | `film.sure_dk BETWEEN 1 AND 400` | |
-| CHECK | `gosterim.bilet_fiyati >= 0` | |
-| CHECK | `musteri.eposta LIKE '_%@_%._%'` | Basit e-posta format kontrolü |
-| CHECK | `rezervasyon.koltuk_no > 0` | |
-| ENUM | `rezervasyon.odeme_durumu` | Sadece Beklemede / Odendi / Iptal |
-| FK ON DELETE CASCADE | salon, telefon tabloları | Sinema/müşteri silinirse bunlar da silinir |
-| FK ON DELETE RESTRICT | gosterim, rezervasyon | Gösterimi olan film/salon, rezervasyonu olan müşteri silinemez |
-
-## 4. Normalizasyon
-
-- **1NF:** Bütün nitelikler atomik. Birden fazla telefon numarası tek alanda tutulmuyor, ayrı tablolarda.
-- **2NF:** Bileşik anahtarlı tablolar `salon`, `sinema_telefon`, `musteri_telefon`. `salon` tablosunda ad ve kapasite anahtarın tamamına (sinema_no + salon_no) bağlı. Sadece sinema_no'ya bağlı bir bilgi (ör. sinema adı) bu tabloda yok. Telefon tablolarında anahtar dışında nitelik yok. Kısmi bağımlılık bulunmuyor.
-- **3NF:** Geçişli bağımlılık yok. Örneğin `gosterim` tablosunda film adı veya salon kapasitesi tutulmuyor, bunlar FK üzerinden JOIN ile alınıyor (view'larda).
-- **Bilinçli tekrar:** `rezervasyon.ucret`, gosterim.bilet_fiyati'nin bir kopyası gibi görünse de aslında bilet satıldığı andaki fiyat. Sonradan gösterimin fiyatı değişirse eski satışların tutarı bozulmasın diye ayrı tutuluyor (tarihsel veri).
-
-## 5. Fonksiyonlar
-
-| Ad | Ne yapar |
-|---|---|
-| `fn_bos_koltuk(gosterim_no)` | Kapasite - iptal edilmemiş rezervasyon sayısı |
-| `fn_salon_dolu_mu(sinema, salon, tarih, saat, süre, hariç)` | Verilen aralıkta (film süresi + 15 dk temizlik) salonda başka gösterim var mı |
-
-## 6. Triggerlar
-
-| Trigger | Olay | Kontrol |
-|---|---|---|
-| `trg_gosterim_ekle` | BEFORE INSERT gosterim | Film vizyon tarihinden önce gösterilemez. Salonda saat çakışması olamaz |
-| `trg_gosterim_guncelle` | BEFORE UPDATE gosterim | Aynı kontroller (kendisi hariç tutularak) |
-| `trg_rezervasyon_ekle` | BEFORE INSERT rezervasyon | Geçmiş gösterime satış yapılamaz, koltuk numarası kapasiteyi aşamaz, koltuk dolu olamaz. Ücret gösterimden otomatik alınır |
-| `trg_rezervasyon_guncelle` | BEFORE UPDATE rezervasyon | İptal geri alınamaz. Koltuk değişirse yeni koltuk boş olmalı |
-| `trg_rezervasyon_log_ekle` | AFTER INSERT rezervasyon | Log tablosuna "oluşturuldu" kaydı |
-| `trg_rezervasyon_log_guncelle` | AFTER UPDATE rezervasyon | Durum değiştiyse log tablosuna eski → yeni |
-| `trg_salon_kapasite` | BEFORE UPDATE salon | Kapasite, ileri tarihli gösterimlerde satılmış koltuk numaralarının altına düşürülemez |
-
-Neden UNIQUE(gosterim_no, koltuk_no) yerine trigger kullanıldı: İptal edilen rezervasyonlar silinmiyor, tabloda "Iptal" durumunda kalıyor. Düz bir UNIQUE kısıtı, iptal edilmiş koltuğun tekrar satılmasını engellerdi. Bu yüzden kontrol, iptalleri hariç tutan bir trigger ile yapıldı.
-
-## 7. View'lar
-
-| View | İçerik | Kullanıldığı yer |
-|---|---|---|
-| `v_gosterim_detay` | Gösterim + film + salon + sinema, satılan/boş koltuk, doluluk % | Gösterimler sayfası, bilet satışı, ana sayfa |
-| `v_rezervasyon_detay` | Rezervasyon + müşteri + film + salon | Rezervasyonlar, müşteri geçmişi |
-| `v_film_hasilat` | Film başına gösterim sayısı, ödenen/bekleyen bilet, hasılat | Filmler, raporlar |
-| `v_musteri_ozet` | Müşteri telefonları, bilet sayısı, toplam harcama | Müşteriler, raporlar |
-| `v_sinema_ozet` | Salon sayısı, toplam kapasite, gösterim sayısı, hasılat | Sinemalar, raporlar |
-
-## 8. Stored Procedure'ler
-
-| Prosedür | Açıklama |
-|---|---|
-| `sp_rezervasyon_yap(musteri, gosterim, koltuk, OUT rez_no)` | Transaction içinde gösterim satırını `FOR UPDATE` ile kilitleyip rezervasyon ekler. Aynı anda iki kişinin aynı koltuğu almasını engeller. Hata olursa ROLLBACK |
-| `sp_odeme_al(rez_no)` | Sadece "Beklemede" durumundakini "Odendi" yapar |
-| `sp_rezervasyon_iptal(rez_no)` | Başlamış gösterimin bileti iptal edilemez |
-| `sp_tarih_araligi_rapor(baslangic, bitis)` | Günlük gösterim, bilet, hasılat raporu |
+- **1NF:** Tüm nitelikler atomiktir. Çok değerli telefon nitelikleri `SINEMA_TELEFON` ve `MUSTERI_TELEFON` tablolarına ayrılmıştır.
+- **2NF:** Bileşik birincil anahtarlı `SALON(sinema_no, salon_no)` tablosunda `ad` ve `kapasite` anahtarın tamamına tam fonksiyonel bağımlıdır; kısmi bağımlılık yoktur.
+- **3NF:** Hiçbir tabloda anahtar olmayan bir nitelik başka bir anahtar olmayan nitelik üzerinden geçişli bağımlılık (`PK → X → Y`) göstermez; türetilmiş nitelikler (`bitis_saati`, `bos_koltuk`) tablolarda sütun olarak tutulmaz, sorgularda hesaplanır.

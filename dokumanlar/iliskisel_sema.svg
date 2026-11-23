@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 860" width="1700" height="860">
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+  <path d="M 0 1 L 10 5 L 0 9 z" fill="#2471a3"/>
+</marker>
+<filter id="g2" x="-5%" y="-5%" width="110%" height="110%">
+  <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+</filter>
+</defs>
+<rect width="1700" height="860" fill="#ffffff"/>
+<text x="850" y="38" text-anchor="middle" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="21" font-weight="bold" fill="#1a2530">SİNEMA REZERVASYON SİSTEMİ — İLİŞKİSEL VERİTABANI ŞEMASI (3NF — 8 Tablo ve PK/FK İlişkileri)</text>
+<polyline points="60,135 28,135 28,335 60,335" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="32" y="231" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<polyline points="370,135 410,135 410,165 450,165" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="414" y="146" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<polyline points="760,165 815,165 815,207 880,207" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="819" y="182" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1:N (sinema_no,salon_no)</text>
+<polyline points="1330,155 1260,155 1260,181 1190,181" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="1264" y="164" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<polyline points="880,155 845,155 845,557 880,557" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="849" y="352" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<polyline points="60,535 28,535 28,755 60,755" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="32" y="641" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<polyline points="370,535 520,535 520,531 880,531" fill="none" stroke="#2471a3" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="524" y="529" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#c0392b">1 : N</text>
+<rect x="60" y="90" width="310" height="116" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="60" y="90" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="60" y="116" width="310" height="6" fill="#1b4f72"/>
+<text x="74" y="112" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">SINEMA</text>
+<rect x="62" y="123" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="140" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="124" y="140" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">sinema_no</text>
+<line x1="124" y1="143" x2="187" y2="143" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="140" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">COUNTER</text>
+<text x="72" y="166" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#566573">UQ</text>
+<text x="124" y="166" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">ad</text>
+<text x="358" y="166" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(100)</text>
+<text x="124" y="192" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">adres</text>
+<text x="358" y="192" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(255)</text>
+<rect x="60" y="290" width="310" height="90" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="60" y="290" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="60" y="316" width="310" height="6" fill="#1b4f72"/>
+<text x="74" y="312" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">SINEMA_TELEFON</text>
+<rect x="62" y="323" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="340" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK,FK</text>
+<text x="124" y="340" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">sinema_no</text>
+<line x1="124" y1="343" x2="187" y2="343" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="340" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<rect x="62" y="349" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="366" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="124" y="366" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">telefon</text>
+<line x1="124" y1="369" x2="173" y2="369" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="366" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(20)</text>
+<rect x="450" y="120" width="310" height="142" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="450" y="120" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="450" y="146" width="310" height="6" fill="#1b4f72"/>
+<text x="464" y="142" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">SALON</text>
+<rect x="452" y="153" width="306" height="24" fill="#fef9e7"/>
+<text x="462" y="170" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK,FK</text>
+<text x="514" y="170" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">sinema_no</text>
+<line x1="514" y1="173" x2="577" y2="173" stroke="#1a2530" stroke-width="1.2"/>
+<text x="748" y="170" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<rect x="452" y="179" width="306" height="24" fill="#fef9e7"/>
+<text x="462" y="196" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="514" y="196" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">salon_no</text>
+<line x1="514" y1="199" x2="570" y2="199" stroke="#1a2530" stroke-width="1.2"/>
+<text x="748" y="196" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="514" y="222" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">ad</text>
+<text x="748" y="222" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(50)</text>
+<text x="514" y="248" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">kapasite</text>
+<text x="748" y="248" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<rect x="1330" y="110" width="310" height="168" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="1330" y="110" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="1330" y="136" width="310" height="6" fill="#1b4f72"/>
+<text x="1344" y="132" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">FILM</text>
+<rect x="1332" y="143" width="306" height="24" fill="#fef9e7"/>
+<text x="1342" y="160" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="1394" y="160" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">film_no</text>
+<line x1="1394" y1="163" x2="1443" y2="163" stroke="#1a2530" stroke-width="1.2"/>
+<text x="1628" y="160" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">COUNTER</text>
+<text x="1394" y="186" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">ad</text>
+<text x="1628" y="186" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(150)</text>
+<text x="1394" y="212" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">tur</text>
+<text x="1628" y="212" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(50)</text>
+<text x="1394" y="238" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">sure_dk</text>
+<text x="1628" y="238" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="1394" y="264" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">vizyon_tarihi</text>
+<text x="1628" y="264" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">DATETIME</text>
+<rect x="880" y="110" width="310" height="220" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="880" y="110" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="880" y="136" width="310" height="6" fill="#1b4f72"/>
+<text x="894" y="132" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">GOSTERIM</text>
+<rect x="882" y="143" width="306" height="24" fill="#fef9e7"/>
+<text x="892" y="160" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="944" y="160" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">gosterim_no</text>
+<line x1="944" y1="163" x2="1021" y2="163" stroke="#1a2530" stroke-width="1.2"/>
+<text x="1178" y="160" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">COUNTER</text>
+<text x="892" y="186" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f618d">FK</text>
+<text x="944" y="186" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="italic" fill="#1a2530">film_no</text>
+<text x="1178" y="186" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="892" y="212" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f618d">FK</text>
+<text x="944" y="212" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="italic" fill="#1a2530">sinema_no</text>
+<text x="1178" y="212" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="892" y="238" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f618d">FK</text>
+<text x="944" y="238" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="italic" fill="#1a2530">salon_no</text>
+<text x="1178" y="238" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="892" y="264" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#566573">UQ*</text>
+<text x="944" y="264" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">tarih</text>
+<text x="1178" y="264" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">DATETIME</text>
+<text x="892" y="290" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#566573">UQ*</text>
+<text x="944" y="290" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">baslangic_saati</text>
+<text x="1178" y="290" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">DATETIME</text>
+<text x="944" y="316" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">bilet_fiyati</text>
+<text x="1178" y="316" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">CURRENCY</text>
+<rect x="880" y="460" width="310" height="194" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="880" y="460" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="880" y="486" width="310" height="6" fill="#1b4f72"/>
+<text x="894" y="482" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">REZERVASYON</text>
+<rect x="882" y="493" width="306" height="24" fill="#fef9e7"/>
+<text x="892" y="510" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="944" y="510" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">rezervasyon_no</text>
+<line x1="944" y1="513" x2="1042" y2="513" stroke="#1a2530" stroke-width="1.2"/>
+<text x="1178" y="510" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">COUNTER</text>
+<text x="892" y="536" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f618d">FK</text>
+<text x="944" y="536" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="italic" fill="#1a2530">musteri_no</text>
+<text x="1178" y="536" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="892" y="562" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#1f618d">FK</text>
+<text x="944" y="562" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="italic" fill="#1a2530">gosterim_no</text>
+<text x="1178" y="562" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="944" y="588" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">rezervasyon_tarihi</text>
+<text x="1178" y="588" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">DATETIME</text>
+<text x="944" y="614" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">koltuk_no</text>
+<text x="1178" y="614" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<text x="944" y="640" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">odeme_durumu</text>
+<text x="1178" y="640" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(10)</text>
+<rect x="60" y="490" width="310" height="142" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="60" y="490" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="60" y="516" width="310" height="6" fill="#1b4f72"/>
+<text x="74" y="512" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">MUSTERI</text>
+<rect x="62" y="523" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="540" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="124" y="540" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">musteri_no</text>
+<line x1="124" y1="543" x2="194" y2="543" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="540" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">COUNTER</text>
+<text x="124" y="566" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">ad</text>
+<text x="358" y="566" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(50)</text>
+<text x="124" y="592" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">soyad</text>
+<text x="358" y="592" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(50)</text>
+<text x="72" y="618" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#566573">UQ</text>
+<text x="124" y="618" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="normal" font-style="normal" fill="#1a2530">eposta</text>
+<text x="358" y="618" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(100)</text>
+<rect x="60" y="710" width="310" height="90" rx="6" fill="#ffffff" stroke="#1b4f72" stroke-width="2" filter="url(#g2)"/>
+<rect x="60" y="710" width="310" height="32" rx="6" fill="#1b4f72"/>
+<rect x="60" y="736" width="310" height="6" fill="#1b4f72"/>
+<text x="74" y="732" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="14.5" font-weight="bold" fill="#ffffff">MUSTERI_TELEFON</text>
+<rect x="62" y="743" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="760" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK,FK</text>
+<text x="124" y="760" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">musteri_no</text>
+<line x1="124" y1="763" x2="194" y2="763" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="760" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">LONG</text>
+<rect x="62" y="769" width="306" height="24" fill="#fef9e7"/>
+<text x="72" y="786" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#7d6608">PK</text>
+<text x="124" y="786" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" font-style="normal" fill="#1a2530">telefon</text>
+<line x1="124" y1="789" x2="173" y2="789" stroke="#1a2530" stroke-width="1.2"/>
+<text x="358" y="786" text-anchor="end" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="11" fill="#7f8c8d">TEXT(20)</text>
+
+    <g transform="translate(450,700)">
+      <rect x="0" y="0" width="1190" height="115" rx="6" fill="#fbfcfc" stroke="#bdc3c7" stroke-width="1.4"/>
+      <text x="16" y="25" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="bold" fill="#1a2530">NOTLAR (İlişkisel Şema Gösterimi ve Kısıtlar):</text>
+      <text x="16" y="48" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#2c3e50">• PK (altı çizili kalın): Birincil Anahtar   • FK (italik): Yabancı Anahtar   • PK,FK: Hem birincil anahtarın parçası hem yabancı anahtar   • UQ: Tekil (UNIQUE) kısıt</text>
+      <text x="16" y="70" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#2c3e50">• UQ* (GOSTERIM): UNIQUE(sinema_no, salon_no, tarih, baslangic_saati) — aynı salonda aynı tarih ve saatte iki gösterim başlayamaz.</text>
+      <text x="16" y="92" font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#2c3e50">• Türetilmiş nitelikler (GOSTERIM.bitis_saati ve GOSTERIM.bos_koltuk) veri tekrarı yaratmamak için tabloda sütun olarak tutulmaz; SELECT sorgularında hesaplanır.</text>
+    </g>
+</svg>

@@ -1,0 +1,39 @@
+@page
+@model SinemaApp.Pages.Sinemalar.IndexModel
+@{
+    ViewData["Title"] = "Sinemalar";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Sinemalar</h2>
+    <a asp-page="Duzenle" class="btn btn-success">+ Yeni Sinema</a>
+</div>
+
+<div class="row">
+    @foreach (DataRow s in Model.Sinemalar.Rows)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">@s["sinema_adi"]</h5>
+                    <div class="text-muted small mb-2">@s["sehir"]</div>
+                    <p class="small mb-2">@s["adres"]</p>
+                    <p class="small mb-3">Tel: @s["telefonlar"]</p>
+                    <table class="table table-sm small mb-0">
+                        <tr><td>Salon sayısı</td><td class="text-right">@s["salon_sayisi"]</td></tr>
+                        <tr><td>Toplam kapasite</td><td class="text-right">@s["toplam_kapasite"] koltuk</td></tr>
+                        <tr><td>Gösterim</td><td class="text-right">@s["gosterim_sayisi"]</td></tr>
+                        <tr><td>Hasılat</td><td class="text-right">@Bicim.Para(s["hasilat"])</td></tr>
+                    </table>
+                </div>
+                <div class="card-footer bg-white">
+                    <a asp-page="Duzenle" asp-route-id="@s["sinema_no"]" class="btn btn-sm btn-outline-primary">Düzenle / Salonlar</a>
+                    <form method="post" asp-page-handler="Sil" asp-route-id="@s["sinema_no"]" class="d-inline"
+                          onsubmit="return confirm('Sinema ve tüm salonları silinsin mi?');">
+                        <button class="btn btn-sm btn-outline-danger">Sil</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
